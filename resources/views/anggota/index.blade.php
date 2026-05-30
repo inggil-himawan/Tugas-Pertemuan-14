@@ -1,93 +1,141 @@
 @extends('layouts.app')
-
-@section('title', 'Daftar Anggota Perpustakaan')
-
+ 
+@section('title', 'Daftar Anggota')
+ 
 @section('content')
-
-{{-- Breadcrumb --}}
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ route('home') }}">Beranda</a></li>
-        <li class="breadcrumb-item active">Anggota</li>
-    </ol>
-</nav>
-
-{{-- Header --}}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="fw-bold mb-1">
-            <i class="bi bi-people-fill text-primary me-2"></i>Daftar Anggota Perpustakaan
-        </h2>
-        <p class="text-muted mb-0">Total: <strong>{{ count($anggota_list) }}</strong> anggota terdaftar</p>
+    <h1>
+        <i class="bi bi-people"></i>
+        Daftar Anggota
+    </h1>
+    <a href="{{ route('anggota.create') }}" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Tambah Anggota
+    </a>
+</div>
+ 
+{{-- Statistik --}}
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card border-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="text-muted">Total Anggota</h6>
+                        <h2>{{ $totalAnggota }}</h2>
+                    </div>
+                    <i class="bi bi-people-fill text-success" style="font-size: 3rem;"></i>
+                </div>
+            </div>
+        </div>
     </div>
-    <div>
-    <span class="badge bg-primary fs-6 px-3 py-2">
-        <i class="bi bi-person-check me-1"></i>
-        {{-- Bungkus dengan collect() agar aman --}}
-        {{ collect($anggota_list)->where('status', 'Aktif')->count() }} Aktif
-    </span>
+    <div class="col-md-4">
+        <div class="card border-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="text-muted">Anggota Aktif</h6>
+                        <h2>{{ $anggotaAktif }}</h2>
+                    </div>
+                    <i class="bi bi-person-check-fill text-primary" style="font-size: 3rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-secondary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="text-muted">Anggota Nonaktif</h6>
+                        <h2>{{ $anggotaNonaktif }}</h2>
+                    </div>
+                    <i class="bi bi-person-x-fill text-secondary" style="font-size: 3rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-</div>
-
+ 
 {{-- Tabel Anggota --}}
-<div class="card shadow-sm">
-    <div class="card-body p-0">
+<div class="card">
+    <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-dark">
+            <table class="table table-hover">
+                <thead class="table-light">
                     <tr>
-                        <th class="ps-3" width="50">No</th>
-                        <th>Kode Anggota</th>
-                        <th>Nama Lengkap</th>
+                        <th>No</th>
+                        <th>Kode</th>
+                        <th>Nama</th>
                         <th>Email</th>
                         <th>Telepon</th>
-                        <th class="text-center">Status</th>
-                        <th class="text-center pe-3">Aksi</th>
+                        <th>Jenis Kelamin</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($anggota_list as $index => $anggota)
-                    <tr>
-                        <td class="ps-3 text-muted">{{ $index + 1 }}</td>
-                        <td>
-                            <span class="badge bg-secondary font-monospace">{{ $anggota['kode'] }}</span>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
-                                     style="width:36px;height:36px;font-size:0.85rem;flex-shrink:0;">
-                                    {{ strtoupper(substr($anggota['nama'], 0, 1)) }}
+                    @forelse ($anggotas as $anggota)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>
+                                <code>{{ $anggota->kode_anggota }}</code>
+                            </td>
+                            <td>
+                                <strong>{{ $anggota->nama }}</strong>
+                            </td>
+                            <td>
+                                <i class="bi bi-envelope"></i>
+                                {{ $anggota->email }}
+                            </td>
+                            <td>
+                                <i class="bi bi-telephone"></i>
+                                {{ $anggota->telepon }}
+                            </td>
+                            <td>
+                                @if ($anggota->jenis_kelamin == 'Laki-laki')
+                                    <i class="bi bi-gender-male text-primary"></i>
+                                @else
+                                    <i class="bi bi-gender-female text-danger"></i>
+                                @endif
+                                {{ $anggota->jenis_kelamin }}
+                            </td>
+                            <td>
+                                @if ($anggota->status == 'Aktif')
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Aktif
+                                    </span>
+                                @else
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-x-circle"></i> Nonaktif
+                                    </span>
+                                @endif
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ route('anggota.show', $anggota->id) }}" 
+                                       class="btn btn-sm btn-info text-white"
+                                       title="Detail">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="{{ route('anggota.edit', $anggota->id) }}" 
+                                       class="btn btn-sm btn-warning"
+                                       title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
                                 </div>
-                                <div>
-                                    <div class="fw-semibold">{{ $anggota['nama'] }}</div>
-                                    <div class="text-muted small">{{ $anggota['alamat'] }}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="text-muted small">{{ $anggota['email'] }}</td>
-                        <td class="text-muted small">{{ $anggota['telepon'] }}</td>
-                        <td class="text-center">
-                            @if ($anggota['status'] === 'Aktif')
-                                <span class="badge bg-success-subtle text-success border border-success-subtle px-3">
-                                    <i class="bi bi-check-circle me-1"></i>Aktif
-                                </span>
-                            @else
-                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3">
-                                    <i class="bi bi-x-circle me-1"></i>Non-Aktif
-                                </span>
-                            @endif
-                        </td>
-                        <td class="text-center pe-3">
-                            <a href="{{ route('anggota.show', $anggota['id']) }}" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-eye me-1"></i>Detail
-                            </a>
-                        </td>
-                    </tr>
-                    @endforeach
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">
+                                <i class="bi bi-inbox"></i>
+                                Tidak ada data anggota
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-
 @endsection

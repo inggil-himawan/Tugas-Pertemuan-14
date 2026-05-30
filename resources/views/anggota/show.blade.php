@@ -1,102 +1,138 @@
 @extends('layouts.app')
-
-@section('title', 'Detail Anggota — ' . $anggota['nama'])
-
+ 
+@section('title', $anggota->nama)
+ 
 @section('content')
-
-{{-- Breadcrumb --}}
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ route('home') }}">Beranda</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('anggota.index') }}">Anggota</a></li>
-        <li class="breadcrumb-item active">{{ $anggota['nama'] }}</li>
-    </ol>
-</nav>
-
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-
-        {{-- Card Header --}}
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-primary text-white py-3">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="rounded-circle bg-white text-primary d-flex align-items-center justify-content-center fw-bold"
-                         style="width:52px;height:52px;font-size:1.4rem;flex-shrink:0;">
-                        {{ strtoupper(substr($anggota['nama'], 0, 1)) }}
+<div class="row">
+    <div class="col-12 mb-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('anggota.index') }}">Anggota</a></li>
+                <li class="breadcrumb-item active">{{ $anggota->nama }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+ 
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-person"></i>
+                    Detail Anggota
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    @if ($anggota->jenis_kelamin == 'Laki-laki')
+                        <i class="bi bi-person-circle text-primary" style="font-size: 5rem;"></i>
+                    @else
+                        <i class="bi bi-person-circle text-danger" style="font-size: 5rem;"></i>
+                    @endif
+                    <h3 class="mt-2">{{ $anggota->nama }}</h3>
+                    @if ($anggota->status == 'Aktif')
+                        <span class="badge bg-success">
+                            <i class="bi bi-check-circle"></i> Anggota Aktif
+                        </span>
+                    @else
+                        <span class="badge bg-secondary">
+                            <i class="bi bi-x-circle"></i> Nonaktif
+                        </span>
+                    @endif
+                </div>
+                
+                <table class="table table-borderless">
+                    <tr>
+                        <td width="200" class="fw-bold">
+                            <i class="bi bi-upc text-success"></i> Kode Anggota
+                        </td>
+                        <td>: <code>{{ $anggota->kode_anggota }}</code></td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">
+                            <i class="bi bi-envelope text-success"></i> Email
+                        </td>
+                        <td>: {{ $anggota->email }}</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">
+                            <i class="bi bi-telephone text-success"></i> Telepon
+                        </td>
+                        <td>: {{ $anggota->telepon }}</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">
+                            <i class="bi bi-geo-alt text-success"></i> Alamat
+                        </td>
+                        <td>: {{ $anggota->alamat }}</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">
+                            <i class="bi bi-calendar text-success"></i> Tanggal Lahir
+                        </td>
+                        <td>: {{ $anggota->tanggal_lahir->format('d F Y') }} ({{ $anggota->umur }} tahun)</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">
+                            <i class="bi bi-gender-ambiguous text-success"></i> Jenis Kelamin
+                        </td>
+                        <td>: {{ $anggota->jenis_kelamin }}</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">
+                            <i class="bi bi-briefcase text-success"></i> Pekerjaan
+                        </td>
+                        <td>: {{ $anggota->pekerjaan ?? '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">
+                            <i class="bi bi-calendar-check text-success"></i> Tanggal Daftar
+                        </td>
+                        <td>: {{ $anggota->tanggal_daftar->format('d F Y') }} ({{ $anggota->lama_anggota }} hari)</td>
+                    </tr>
+                </table>
+                
+                <hr>
+                <div class="row text-muted small">
+                    <div class="col-md-6">
+                        <i class="bi bi-clock"></i> 
+                        Ditambahkan: {{ $anggota->created_at->format('d M Y H:i') }}
                     </div>
-                    <div>
-                        <h4 class="mb-0 fw-bold">{{ $anggota['nama'] }}</h4>
-                        <small class="opacity-75 font-monospace">{{ $anggota['kode'] }}</small>
-                    </div>
-                    <div class="ms-auto">
-                        @if ($anggota['status'] === 'Aktif')
-                            <span class="badge bg-success fs-6 px-3 py-2">
-                                <i class="bi bi-check-circle me-1"></i>Aktif
-                            </span>
-                        @else
-                            <span class="badge bg-danger fs-6 px-3 py-2">
-                                <i class="bi bi-x-circle me-1"></i>Non-Aktif
-                            </span>
-                        @endif
+                    <div class="col-md-6 text-end">
+                        <i class="bi bi-clock-history"></i> 
+                        Terakhir Update: {{ $anggota->updated_at->format('d M Y H:i') }}
                     </div>
                 </div>
             </div>
-
-            {{-- Card Body --}}
-            <div class="card-body p-4">
-                <h6 class="text-uppercase text-muted fw-semibold mb-3 small">
-                    <i class="bi bi-person-lines-fill me-1"></i>Informasi Anggota
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header bg-secondary text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-gear"></i> Aksi
                 </h6>
-                <table class="table table-borderless">
-                    <tr>
-                        <th width="160" class="text-muted fw-normal">Kode Anggota</th>
-                        <td>: <span class="badge bg-secondary font-monospace">{{ $anggota['kode'] }}</span></td>
-                    </tr>
-                    <tr>
-                        <th class="text-muted fw-normal">Nama Lengkap</th>
-                        <td>: <strong>{{ $anggota['nama'] }}</strong></td>
-                    </tr>
-                    <tr>
-                        <th class="text-muted fw-normal">Email</th>
-                        <td>: <a href="mailto:{{ $anggota['email'] }}">{{ $anggota['email'] }}</a></td>
-                    </tr>
-                    <tr>
-                        <th class="text-muted fw-normal">Telepon</th>
-                        <td>: {{ $anggota['telepon'] }}</td>
-                    </tr>
-                    <tr>
-                        <th class="text-muted fw-normal">Alamat</th>
-                        <td>: {{ $anggota['alamat'] }}</td>
-                    </tr>
-                    <tr>
-                        <th class="text-muted fw-normal">Pekerjaan</th>
-                        <td>: {{ $anggota['pekerjaan'] }}</td>
-                    </tr>
-                    <tr>
-                        <th class="text-muted fw-normal">Tanggal Daftar</th>
-                        <td>: {{ $anggota['tanggal_daftar'] }}</td>
-                    </tr>
-                    <tr>
-                        <th class="text-muted fw-normal">Status</th>
-                        <td>:
-                            @if ($anggota['status'] === 'Aktif')
-                                <span class="badge bg-success">Aktif</span>
-                            @else
-                                <span class="badge bg-danger">Non-Aktif</span>
-                            @endif
-                        </td>
-                    </tr>
-                </table>
             </div>
-
-            <div class="card-footer bg-light d-flex gap-2">
-                <a href="{{ route('anggota.index') }}" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left me-1"></i>Kembali ke Daftar
+            <div class="card-body d-grid gap-2">
+                <a href="{{ route('anggota.edit', $anggota->id) }}" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Edit Anggota
                 </a>
+                <a href="{{ route('anggota.index') }}" class="btn btn-outline-success">
+                    <i class="bi bi-arrow-left"></i> Kembali
+                </a>
+                <hr>
+                <form action="{{ route('anggota.destroy', $anggota->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="bi bi-trash"></i> Hapus Anggota
+                    </button>
+                </form>
             </div>
         </div>
-
     </div>
 </div>
-
 @endsection
