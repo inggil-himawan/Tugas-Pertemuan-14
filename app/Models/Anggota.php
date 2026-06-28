@@ -117,4 +117,10 @@ class Anggota extends Model
             ->whereYear($kolom, Carbon::now()->year)
             ->whereMonth($kolom, Carbon::now()->month);
     }
+
+    // Tambahkan method ini di class Anggota
+    public function transaksis()
+    {
+        return $this->hasMany(Transaksi::class);
+    }
 }
